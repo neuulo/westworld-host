@@ -85,11 +85,13 @@ jobs:
             https://openrouter.ai/api/v1/chat/completions \
             -H "Authorization: Bearer $OR_KEY" -H "Content-Type: application/json" \
             -d '{"model":"anthropic/claude-sonnet-4.6","max_tokens":5,"messages":[{"role":"user","content":"hi"}]}')
-          echo "HTTP_STATUS=$code"
-          echo "----- raw response body -----"
-          cat /tmp/or.json; echo
-          echo "----- key balance/auth check -----"
-          curl -s https://openrouter.ai/api/v1/key -H "Authorization: Bearer $OR_KEY"; echo
+          echo "CHAT_COMPLETIONS_HTTP=$code"; cat /tmp/or.json; echo
+          echo "----- Anthropic /messages format (what Claude Code uses) -----"
+          m=$(curl -s -o /tmp/m.json -w "%{http_code}" \
+            https://openrouter.ai/api/v1/messages \
+            -H "x-api-key: $OR_KEY" -H "anthropic-version: 2023-06-01" -H "Content-Type: application/json" \
+            -d '{"model":"anthropic/claude-sonnet-4.6","max_tokens":5,"messages":[{"role":"user","content":"hi"}]}')
+          echo "MESSAGES_HTTP=$m"; cat /tmp/m.json; echo
 
       - name: Run persona loops
         env:
