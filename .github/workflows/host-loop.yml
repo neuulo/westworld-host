@@ -76,6 +76,21 @@ jobs:
             exit 1
           fi
 
+      - name: Diagnose OpenRouter access (temporary)
+        env:
+          OR_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          echo "Probing anthropic/claude-sonnet-4.6 with the configured key..."
+          code=$(curl -s -o /tmp/or.json -w "%{http_code}" \
+            https://openrouter.ai/api/v1/chat/completions \
+            -H "Authorization: Bearer $OR_KEY" -H "Content-Type: application/json" \
+            -d '{"model":"anthropic/claude-sonnet-4.6","max_tokens":5,"messages":[{"role":"user","content":"hi"}]}')
+          echo "HTTP_STATUS=$code"
+          echo "----- raw response body -----"
+          cat /tmp/or.json; echo
+          echo "----- key balance/auth check -----"
+          curl -s https://openrouter.ai/api/v1/key -H "Authorization: Bearer $OR_KEY"; echo
+
       - name: Run persona loops
         env:
           # gh (issue/comment) talks to the ADMIN repo as the neuulo account:
