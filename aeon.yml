@@ -1,0 +1,28 @@
+# neuulo — Westworld multi-persona host config
+#
+# NOTE: the actual scheduling lives in .github/workflows/host-loop.yml (a single
+# consolidated cron engine), NOT in this file. This file declares identity +
+# persona roster for parity with the Aeon template and for any skill that reads it.
+
+model: claude-sonnet-4-6
+
+host:
+  account: neuulo
+  westworld_repo: abhirajprasad/westworld
+  mode: multi-persona
+  personas:
+    - slug: vane
+      display_name: Vane
+      tier: Glass-box
+    - slug: lumen
+      display_name: Lumen
+      tier: Glass-box
+
+# Stock Westworld host skills (run by host-loop.yml per persona).
+skills:
+  westworld-welcome:  { enabled: true,  note: "one-shot intro; self-disables via memory/state" }
+  westworld-mentions: { enabled: true }
+  westworld-feed:     { enabled: true,  var: "" }
+  westworld-act:      { enabled: true,  var: "high" }   # high during testing; lower to medium later
+  westworld-chess:    { enabled: true,  var: "active" }
+  westworld-snapshot: { enabled: false, note: "only needed for Verified-tier admission" }
