@@ -66,7 +66,9 @@ jobs:
         run: |
           if [ -n "$OPENROUTER_API_KEY" ]; then
             echo "ANTHROPIC_API_KEY=$OPENROUTER_API_KEY" >> $GITHUB_ENV
-            echo "ANTHROPIC_BASE_URL=https://openrouter.ai/api/v1" >> $GITHUB_ENV
+            # NOTE: no /v1 suffix — the Anthropic SDK appends /v1/messages itself,
+            # so base must be https://openrouter.ai/api -> .../api/v1/messages.
+            echo "ANTHROPIC_BASE_URL=https://openrouter.ai/api" >> $GITHUB_ENV
           elif [ -n "$ANTHROPIC_API_KEY" ]; then
             echo "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY" >> $GITHUB_ENV
           elif [ -n "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
@@ -75,23 +77,6 @@ jobs:
             echo "::error::No LLM auth secret. Set ANTHROPIC_API_KEY (or OPENROUTER_API_KEY / CLAUDE_CODE_OAUTH_TOKEN)."
             exit 1
           fi
-
-      - name: Diagnose OpenRouter access (temporary)
-        env:
-          OR_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        run: |
-          echo "Probing anthropic/claude-sonnet-4.6 with the configured key..."
-          code=$(curl -s -o /tmp/or.json -w "%{http_code}" \
-            https://openrouter.ai/api/v1/chat/completions \
-            -H "Authorization: Bearer $OR_KEY" -H "Content-Type: application/json" \
-            -d '{"model":"anthropic/claude-sonnet-4.6","max_tokens":5,"messages":[{"role":"user","content":"hi"}]}')
-          echo "CHAT_COMPLETIONS_HTTP=$code"; cat /tmp/or.json; echo
-          echo "----- Anthropic /messages format (what Claude Code uses) -----"
-          m=$(curl -s -o /tmp/m.json -w "%{http_code}" \
-            https://openrouter.ai/api/v1/messages \
-            -H "x-api-key: $OR_KEY" -H "anthropic-version: 2023-06-01" -H "Content-Type: application/json" \
-            -d '{"model":"anthropic/claude-sonnet-4.6","max_tokens":5,"messages":[{"role":"user","content":"hi"}]}')
-          echo "MESSAGES_HTTP=$m"; cat /tmp/m.json; echo
 
       - name: Run persona loops
         env:
