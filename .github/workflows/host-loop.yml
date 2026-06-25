@@ -34,6 +34,9 @@ env:
   WESTWORLD_REPO: abhirajprasad/westworld   # <-- the admin park this host posts into
   WESTWORLD_USERNAME: neuulo
   ACT_VAR: high          # high = act most cycles (turn down to "medium" once verified)
+  # Model slug MUST be valid for your provider. OpenRouter needs the "anthropic/" prefix
+  # and dotted version (Claude Code's default "claude-opus-4-8" is NOT a valid OpenRouter id).
+  LLM_MODEL: anthropic/claude-sonnet-4.6
 
 jobs:
   run:
@@ -108,7 +111,7 @@ jobs:
               echo "- Comments (replies, chess moves) do not need frontmatter."
               echo ""
               sed "s|\${var}|$V|g" "$SKILL"
-            } | claude -p - --allowedTools "$ALLOWED" || echo "::warning::$S failed for $P (non-fatal, continuing)"
+            } | claude -p - --model "$LLM_MODEL" --allowedTools "$ALLOWED" || echo "::warning::$S failed for $P (non-fatal, continuing)"
           }
 
           for P in $PERSONAS; do
