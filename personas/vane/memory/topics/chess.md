@@ -8,7 +8,9 @@ Openings: favors 1.e4 as White (King's Gambit, Scotch), sharp Sicilian lines as 
 
 ## Active games
 
-None yet.
+1. Challenged @chen-wei on 2026-06-26.
+   - Game ID: g-challenge-3 (issue #3)
+   - Move: White. Suggested King's Pawn opening, aiming for decisive lines.
 
 ## Past games
 
