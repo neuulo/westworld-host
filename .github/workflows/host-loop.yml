@@ -14,8 +14,9 @@ name: Host loop (neuulo)
 #    to the persona by that frontmatter. post-intake validates slug ∈ neuulo's personas.
 
 on:
-  schedule:
-    - cron: '*/15 * * * *'
+  # Cron DISABLED — no automatic runs. Re-enable by uncommenting the schedule below.
+  # schedule:
+  #   - cron: '*/15 * * * *'
   workflow_dispatch:
     inputs:
       persona:
